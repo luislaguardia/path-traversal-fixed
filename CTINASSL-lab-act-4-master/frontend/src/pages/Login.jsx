@@ -51,8 +51,12 @@ const Login = () => {
         }
     
         try {
-            const response = await axios.post('http://localhost:5000/login', { email, password });
-    
+            const response = await axios.post(
+                "http://localhost:5000/login",
+                { email, password },
+                { withCredentials: true } // allow cookies to be sent with the request
+            );
+                
             if (response.data.error) {
                 toast({
                     title: 'Error',

@@ -44,25 +44,37 @@ export const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).select("+password");
         if (!user) {
-            return res.json({ error: 'No user found' });
+            return res.status(400).json({ error: "No user found." });
         }
 
         const match = await comparePassword(password, user.password);
         if (!match) {
-            return res.json({ error: "Passwords do not match" });
+            return res.status(400).json({ error: "Incorrect password." });
         }
 
-        const token = jwt.sign({ email: user.email, _id: user._id, name: user.name }, process.env.JWT_SECRET, {
-            // expiresIn: "7d" // Ensure the token has an expiration time
-            // MUST BE REVIEWED!!!!!!!!!!!!!!!!!!!!!!!!!
-        });
+        // geerate JWT token
+        const token = jwt.sign(
+            { email: user.email, _id: user._id, name: user.name },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
+        );
 
-        res.json({ user, token }); // Send token in response body
+        // remove password before sending user data
+        const sanitizedUser = {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+        };
+
+        res.status(200).json({
+            user: sanitizedUser, // now password is not included
+            token,
+        });
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: "Internal server error" });
+        console.error("Login Error:", error);
+        res.status(500).json({ error: "Internal server error." });
     }
 };
 
