@@ -54,29 +54,36 @@ export const loginUser = async (req, res) => {
             return res.status(400).json({ error: "Incorrect password." });
         }
 
-        // geerate JWT token
+        // Generate JWT token
         const token = jwt.sign(
             { email: user.email, _id: user._id, name: user.name },
             process.env.JWT_SECRET,
             { expiresIn: "7d" }
         );
 
-        // remove password before sending user data
         const sanitizedUser = {
             _id: user._id,
             name: user.name,
             email: user.email,
         };
 
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "Strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days expiry
+        });
+
         res.status(200).json({
-            user: sanitizedUser, // now password is not included
-            token,
+            user: sanitizedUser,
+            message: "Login successful",
         });
     } catch (error) {
         console.error("Login Error:", error);
         res.status(500).json({ error: "Internal server error." });
     }
 };
+
 
 
 //profile 
