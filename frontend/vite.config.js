@@ -8,10 +8,17 @@ export default defineConfig({
     port: 5173,
     headers: {
       'X-Frame-Options': 'DENY',
-      'Content-Security-Policy': "frame-ancestors 'none'",
+      'Content-Security-Policy': 
+        "default-src 'self'; " +
+        "script-src 'self' 'strict-dynamic'; " +
+        "style-src 'self' 'strict-dynamic'; " +
+        "img-src 'self' data:; " +
+        "connect-src 'self'; " +
+        "frame-ancestors 'none';",
+      'X-Content-Type-Options': 'nosniff', // ✅ Fix for ZAP alert
     },
     cors: {
-      origin: 'http://localhost:5173', // Only allow requests from frontend
+      origin: 'http://localhost:5173',
       methods: ['GET', 'POST', 'PUT', 'DELETE'],
       allowedHeaders: ['Content-Type', 'Authorization'],
       credentials: true,
@@ -28,13 +35,13 @@ export default defineConfig({
       strict: true,
     },
     build: {
-      minify: 'esbuild', // Ensure production-like minification
+      minify: 'esbuild',
     },
     define: {
-      'process.env': {}, // Prevents leaking env variables
+      'process.env': {},
     },
     hmr: {
-      overlay: false, // Disable error overlay to prevent IP exposure
+      overlay: false,
     },
   },
 });
