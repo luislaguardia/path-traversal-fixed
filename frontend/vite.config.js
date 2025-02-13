@@ -15,7 +15,7 @@ export default defineConfig({
         "img-src 'self' data:; " +
         "connect-src 'self'; " +
         "frame-ancestors 'none';",
-      'X-Content-Type-Options': 'nosniff', // ✅ Fix for ZAP alert
+      'X-Content-Type-Options': 'nosniff', // ZAP alert solve
     },
     cors: {
       origin: 'http://localhost:5173',

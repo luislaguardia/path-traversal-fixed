@@ -25,11 +25,11 @@ app.use(helmet({
       frameAncestors: ["'none'"],
     }
   },
-  xContentTypeOptions: true // ✅ Ensures the header is set
+  xContentTypeOptions: true //  Ensures the header is set // Zap alert solved
 }));
 
 app.use((req, res, next) => {
-  res.setHeader("X-Content-Type-Options", "nosniff"); // ✅ Explicitly set in responses
+  res.setHeader("X-Content-Type-Options", "nosniff"); //  Explicitly set in responses
   next();
 });
 
